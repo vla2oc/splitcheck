@@ -124,3 +124,7 @@
 2026-10-31 | Фон .aurora — opacity 0.85 | просьба человека: фон на 15% менее заметен
 2026-10-31 | BottomBar: flex-wrap + ml-auto у кнопки | сумма 36px и кнопка не помещаются рядом на 360–412px
 2026-10-31 | <html suppressHydrationWarning> | mdl-js от расширения браузера, действует только на сам <html>
+2026-10-31 | Vercel: /api/parse — Route Handler в этом приложении, синк — Supabase; Hono-бэкенд не деплоим | serverless без диска и общей памяти: SQLite и SSE-хаб не работают
+2026-10-31 | /api/parse: server-side fallbacks "default" | дефолт доки SDK для Opus 5.5: отказ модели → запасная модель, а не unreadable
+2026-10-31 | Fast mode только при PARSE_SPEED=fast | лимит орг. 0 fast-токенов/мин: иначе каждый запрос сперва ловит 429
+2026-10-31 | Откат деплоя: тег pre-vercel + Instant Rollback Vercel; схема Supabase не меняется | откат без миграций

@@ -1,7 +1,7 @@
 import { compressImage } from "@/lib/receipt/image";
 import type { ParsedReceipt, ReceiptParser } from "@/lib/receipt/types";
 
-// Ответ POST /api/parse нашего бэкенда (репо Bsemenii/reciept, server/src/parser.ts: Draft). Деньги — целые гроши
+// Ответ POST /api/parse (src/app/api/parse, перенос бэкенда Bsemenii/reciept: Draft в receipt/claude/schema.ts). Деньги — целые гроши
 export type BackendDraft = {
   currency: string;
   items: { id: string; name: string; display_name: string; price_cents: number }[];

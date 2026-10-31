@@ -5,16 +5,17 @@
 SplitCheck: хост фоткает чек → QR; гости тапают свои позиции и видят долг (BLIK). Фронт + наш бэкенд (Bsemenii/reciept): Claude-распознавание и синк. Спека: docs/SPEC.md
 
 ## Сделано (текущая фаза, новое сверху)
+- 2026-10-31 — Ветка vercel: /api/parse перенесён из бэкенда в Route Handler (тесты 139, build ок); замер чека: Opus 5,2 с, Sonnet 5.5 3,4 с, Haiku 5.5 2,4 с; fast mode — лимит 0 у орг.
 - 2026-10-31 — BottomBar: flex-wrap, сумма не наезжает на кнопку (330–412px, 100,10 zł); <html suppressHydrationWarning> — ошибки нет
 - 2026-10-31 — Аудит: тесты 119, tsc/lint/build ок; QR декодирован → LAN-URL, гость синкается; фон .aurora opacity 0.85
 - 2026-10-31 — бэкенд подключён: парсер → /api/parse (Claude), синк → /api/sessions (HTTP+SSE), прокси в next.config. Проверено в браузере: скан (мок) → сессия → гость тапает → хост видит; конфликт 409 → повтор
 - 2026-10-31 — ф.0–5, ф.7 (кроме крит. 7), чек-принтер; ф.6 пропущена — docs/log/2026-10.md
 
 ## Сейчас в работе
-Запуск: в репо бэкенда `npm run server` (:8787), здесь `npm run dev`; телефоны — `cloudflared tunnel --url http://localhost:3000`. Чек: ждём ?fps=1 с телефонов
+Деплой на Vercel: ветка vercel, тег pre-vercel = откат. Синк — Supabase, чтение чека — src/app/api/parse (ключ в .env.local)
 
 ## Следующий шаг
-Прогон на 2–3 телефонах через туннель с реальным чеком (Claude); бэкап — /?demo
+Человек: импорт репо в Vercel + env (ANTHROPIC_API_KEY, NEXT_PUBLIC_SUPABASE_*) → preview с ветки vercel → телефон → merge в main
 
 ## Открытые вопросы ко мне
 - Коммиты: ф.0–7 одним коммитом и push на GitHub по просьбе человека, без соавторства Claude
@@ -24,9 +25,11 @@ SplitCheck: хост фоткает чек → QR; гости тапают св�
 - Turbopack-кэш отдаёт старый globals.css (build без .aurora, dev без opacity); без .next/cache — ок. Dev: перезапуск без .next/dev/cache
 - BLIK-кнопка на ≤340px переносит номер на 2 строку — чинить?
 - Prod: редкое исключение motion (readValueFromInstance) — чинить?
+- Модель чтения: PARSE_MODEL=claude-sonnet-5-5 (на 35% быстрее, те же названия на синт. чеке) — после eval на реальных фото?
+- Fast mode: лимит орг. 0 токенов/мин — просить доступ у Anthropic sales?
 
 ## Осталось `[предположение]`
 - Чек: reduced motion — проверить в DevTools → Rendering
 - 1× вкладка хоста зависла на загрузке, не повторилось
 - Stop-хук не проверен (SessionStart работает) — проверить: /hooks
-- Синк через cloudflared на телефонах (SSE через прокси Next) — проверено только на localhost
+- Время чтения реальных фото (замер только на синтетическом чеке) — проверить на preview
