@@ -4,6 +4,7 @@ import {
   Instrument_Sans,
   Instrument_Serif,
 } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { MotionConfig } from "motion/react";
 import "./globals.css";
 
@@ -42,6 +43,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full  flex flex-col">
         <div className="aurora" aria-hidden="true"></div>
         <MotionConfig reducedMotion="user">{children}</MotionConfig>
+        {/* Vercel Web Analytics: просмотры страниц — в дашборде Vercel → Analytics (включается там же) */}
+        <Analytics />
       </body>
     </html>
   );

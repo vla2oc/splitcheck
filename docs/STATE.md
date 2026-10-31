@@ -5,6 +5,7 @@
 SplitCheck: хост фоткает чек → QR; гости тапают свои позиции и видят долг (BLIK). Фронт + наш бэкенд (Bsemenii/reciept): Claude-распознавание и синк. Спека: docs/SPEC.md
 
 ## Сделано (текущая фаза, новое сверху)
+- 2026-10-31 — Vercel Web Analytics: <Analytics /> в layout.tsx (@vercel/analytics 2.0.1); build ок, страницы остались статичными
 - 2026-10-31 — Production: https://splitcheck-snowy.vercel.app (main 31dad74, Ready): главная, Claude 4,4 с, сессия в Supabase через RPC, выгрузка 401
 - 2026-10-31 — Supabase закрыт (002_lockdown.sql применён человеком): только RPC, гость — отметки и себя, BLIK/цены — секрет хоста, синк — сигнал Broadcast, чистка 30 дн.; атаки 15/15, хост↔гость ок
 - 2026-10-31 — Ветка vercel: /api/parse перенесён из бэкенда в Route Handler (тесты 139, build ок); замер чека: Opus 5,2 с, Sonnet 5.5 3,4 с, Haiku 5.5 2,4 с; fast mode — лимит 0 у орг.
