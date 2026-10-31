@@ -1,0 +1,37 @@
+#!/bin/sh
+# Включается один раз: git config core.hooksPath .githooks (делает scripts/setup.sh).
+# Красный коммит — чинить. `--no-verify` обходит хук; это разрешено только со строкой в docs/DECISIONS.md.
+fail=0
+staged=$(git diff --cached --name-only --diff-filter=ACMR)
+
+# 1. Секреты: env-файлы (кроме .env.example) и значения, похожие на ключи. Проверяется версия из индекса.
+patterns='(^|[?&])key=[A-Za-z0-9_-]{20,}|[A-Z0-9_]*(KEY|TOKEN|SECRET)=[A-Za-z0-9_/+-]{16,}|-----BEGIN [A-Z ]*PRIVATE KEY-----|AKIA[0-9A-Z]{16}|gh[pousr]_[A-Za-z0-9]{20,}|sk-[A-Za-z0-9_-]{20,}'
+for f in $staged; do
+  case "$f" in
+    .env.example) ;;
+    .env|.env.*|*/.env|*/.env.*) echo "pre-commit: в индексе env-файл: $f"; fail=1 ;;
+  esac
+  hit=$(git show ":$f" 2>/dev/null | grep -In -E -m 3 "$patterns")
+  if [ -n "$hit" ]; then
+    echo "pre-commit: похоже на секрет в $f:"; echo "$hit" | cut -c1-120 | sed 's/^/    /'; fail=1
+  fi
+done
+
+# 2. Потолки документов (CLAUDE.md §8)
+scripts/check-docs.sh || fail=1
+
+# 3. Один шаг = один коммит: если меняется код, docs/STATE.md обязан быть в индексе.
+code=0; state=0
+for f in $staged; do
+  case "$f" in
+    docs/STATE.md) state=1 ;;
+    docs/*|*.md|.gitignore|.claude/*|.githooks/*) ;;
+    scripts/boot.sh|scripts/check-docs.sh|scripts/stop-hook.sh|scripts/setup.sh) ;;   # инфраструктура набора
+    *) code=1 ;;
+  esac
+done
+if [ "$code" -eq 1 ] && [ "$state" -eq 0 ]; then
+  echo "pre-commit: в индексе изменения кода, но нет docs/STATE.md — обнови чекпоинт (CLAUDE.md §4, шаг 5)"; fail=1
+fi
+
+exit $fail

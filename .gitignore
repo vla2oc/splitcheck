@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# agent-kit: генерируется scripts/boot.sh
+docs/BOOT.md
+!.env.example

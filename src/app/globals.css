@@ -1,26 +1,88 @@
 @import "tailwindcss";
 
+/* Только тёмная тема — docs/SPEC.md «Дизайн-система» */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --oxford: #0e0929; /* фон приложения */
+  --surface-1: #161135; /* карточки, строки */
+  --surface-2: #201a4a; /* bottom sheet, инпуты */
+  --border: rgba(146, 172, 255, 0.14);
+
+  --vista: #92acff; /* акцент: главные кнопки, выбранные строки, прогресс */
+  --vista-strong: #b2c4ff; /* hover/pressed */
+  --vista-soft: rgba(146, 172, 255, 0.12); /* фон выбранной строки */
+  --on-vista: #0e0929; /* текст на кнопке Vista */
+
+  --text: #f4f5ff;
+  --text-muted: rgba(244, 245, 255, 0.6);
+  --danger: #ff8f8f;
+
+  /* Аватары гостей; хост всегда --vista. Инициалы --oxford, контраст 10.5–13.8:1 */
+  --avatar-1: #ffb4a2; /* peach */
+  --avatar-2: #9ee6c4; /* mint */
+  --avatar-3: #f5d88a; /* butter */
+  --avatar-4: #d4b8ff; /* lilac */
+  --avatar-5: #9fd8f0; /* sky */
+  --avatar-6: #f7a8c8; /* rose */
+
+  /* Бумага чека — светлая на тёмном фоне; текст на ней --oxford */
+  --paper: #f5f7ff;
+  --paper-muted: rgba(14, 9, 41, 0.6);
+  --paper-rule: rgba(14, 9, 41, 0.18);
+  --paper-mine: rgba(146, 172, 255, 0.22); /* фон «моей» строки */
+  --paper-edge: #edf0fc; /* низ градиента термобумаги — им же залит волнистый край */
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --color-oxford: var(--oxford);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-vista: var(--vista);
+  --color-vista-strong: var(--vista-strong);
+  --color-vista-soft: var(--vista-soft);
+  --color-on-vista: var(--on-vista);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-danger: var(--danger);
+  --color-avatar-1: var(--avatar-1);
+  --color-avatar-2: var(--avatar-2);
+  --color-avatar-3: var(--avatar-3);
+  --color-avatar-4: var(--avatar-4);
+  --color-avatar-5: var(--avatar-5);
+  --color-avatar-6: var(--avatar-6);
+  --color-paper: var(--paper);
+  --color-paper-muted: var(--paper-muted);
+  --color-paper-rule: var(--paper-rule);
+  --color-paper-mine: var(--paper-mine);
+  --font-sans: var(--font-instrument-sans);
   --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-instrument-serif);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--oxford);
+  color: var(--text);
+}
+
+/* Термобумага: лёгкий перелив сверху вниз; drop-shadow, а не box-shadow — тень обходит и волнистый край */
+.paper {
+  background: linear-gradient(180deg, var(--paper) 0%, var(--paper) 55%, var(--paper-edge) 100%);
+  filter: drop-shadow(0 14px 22px rgba(4, 2, 16, 0.55));
+}
+
+/* Отрывной волнистый край снизу бумаги: шаг 20px, ширина бумаги кратна 20 — без обрезанных полукругов */
+.paper::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -10px;
+  height: 10px;
+  background: var(--paper-edge);
+  -webkit-mask: radial-gradient(circle at 10px 0, #000 7px, transparent 7.5px) 0 0 / 20px 10px repeat-x;
+  mask: radial-gradient(circle at 10px 0, #000 7px, transparent 7.5px) 0 0 / 20px 10px repeat-x;
 }

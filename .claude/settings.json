@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(scripts/*)",
+      "Bash(./scripts/*)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(npm test*)",
+      "Bash(npx tsc*)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && { scripts/boot.sh >&2; cat docs/BOOT.md; }",
+            "timeout": 10,
+            "statusMessage": "boot.sh → BOOT.md"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && scripts/stop-hook.sh",
+            "timeout": 15,
+            "statusMessage": "check-docs"
+          }
+        ]
+      }
+    ]
+  }
+}
