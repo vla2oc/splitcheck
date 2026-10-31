@@ -45,10 +45,10 @@ export default function Home() {
         <ScanPreview file={file} />
       ) : (
         <>
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
             <motion.h1
               variants={enter}
-              className="text-[32px] leading-tight font-medium tracking-[-0.02em] leading-relaxed p-2"
+              className="text-[42px]  font-medium tracking-[-0.02em] leading-tight"
             >
               Podziel rachunek <br />w 10{" "}
               <span className="font-serif italic">sekund</span>

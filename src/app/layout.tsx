@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
-import { Geist_Mono, Instrument_Sans, Instrument_Serif } from "next/font/google";
+import {
+  Geist_Mono,
+  Instrument_Sans,
+  Instrument_Serif,
+} from "next/font/google";
 import { MotionConfig } from "motion/react";
 import "./globals.css";
 
@@ -33,7 +37,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="pl"
       className={`${instrumentSans.variable} ${geistMono.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full  flex flex-col">
+        <div className="aurora" aria-hidden="true"></div>
         <MotionConfig reducedMotion="user">{children}</MotionConfig>
       </body>
     </html>

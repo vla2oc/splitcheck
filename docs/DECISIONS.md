@@ -121,3 +121,4 @@
 2026-10-31 | Скидка бэкенда сверх сервиса и чаевых режет позиции пропорционально (наибольший остаток), serviceGrosze ≥ 0 | в Session нет скидки; сумма до гроша
 2026-10-31 | next.config: rewrites /api → BACKEND_URL (дефолт localhost:8787), proxyTimeout 120 с, *.trycloudflare.com | прокси по умолчанию рвёт через 30 с
 2026-10-31 | package-lock.json обновлён через npm install | npm ci падал: lock не совпадал с package.json
+2026-10-31 | Фон .aurora — opacity 0.85 | просьба человека: фон на 15% менее заметен

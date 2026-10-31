@@ -70,7 +70,12 @@ body {
 
 /* Термобумага: лёгкий перелив сверху вниз; drop-shadow, а не box-shadow — тень обходит и волнистый край */
 .paper {
-  background: linear-gradient(180deg, var(--paper) 0%, var(--paper) 55%, var(--paper-edge) 100%);
+  background: linear-gradient(
+    180deg,
+    var(--paper) 0%,
+    var(--paper) 55%,
+    var(--paper-edge) 100%
+  );
   filter: drop-shadow(0 14px 22px rgba(4, 2, 16, 0.55));
 }
 
@@ -83,6 +88,61 @@ body {
   bottom: -10px;
   height: 10px;
   background: var(--paper-edge);
-  -webkit-mask: radial-gradient(circle at 10px 0, #000 7px, transparent 7.5px) 0 0 / 20px 10px repeat-x;
-  mask: radial-gradient(circle at 10px 0, #000 7px, transparent 7.5px) 0 0 / 20px 10px repeat-x;
+  -webkit-mask: radial-gradient(circle at 10px 0, #000 7px, transparent 7.5px) 0
+    0 / 20px 10px repeat-x;
+  mask: radial-gradient(circle at 10px 0, #000 7px, transparent 7.5px) 0 0 /
+    20px 10px repeat-x;
+}
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0.85; /* фон на 15% тише — просьба человека, 2026-10-31 */
+  background:
+    radial-gradient(
+      120% 55% at 50% 118%,
+      rgba(230, 235, 255, 0.6) 0%,
+      transparent 40%
+    ),
+    radial-gradient(
+      75% 45% at 0% 98%,
+      rgba(184, 166, 255, 0.75) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      75% 45% at 100% 88%,
+      rgba(146, 172, 255, 0.8) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      90% 50% at 50% 62%,
+      rgba(42, 42, 124, 0.9) 0%,
+      transparent 50%
+    ),
+    linear-gradient(180deg, #0e0929 0%, #120d38 40%, #1c1858 70%, #2a2a7c 100%);
+}
+
+/* сетка: проявляется сверху вниз, как на референсе */
+.aurora::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+  background-size: 56px 56px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 30%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 30%);
+}
+
+/* зерно, чтобы на телефонах не было полос (banding) в градиенте */
+.aurora::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.025;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
 }

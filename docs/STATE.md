@@ -5,6 +5,7 @@
 SplitCheck: хост фоткает чек → QR; гости тапают свои позиции и видят долг (BLIK). Фронт + наш бэкенд (Bsemenii/reciept): Claude-распознавание и синк. Спека: docs/SPEC.md
 
 ## Сделано (текущая фаза, новое сверху)
+- 2026-10-31 — Аудит: тесты 119, tsc/lint/build ок; QR декодирован → LAN-URL, гость синкается; фон .aurora opacity 0.85
 - 2026-10-31 — бэкенд подключён: парсер → /api/parse (Claude), синк → /api/sessions (HTTP+SSE), прокси в next.config. Проверено в браузере: скан (мок) → сессия → гость тапает → хост видит; конфликт 409 → повтор
 - 2026-10-31 — ф.0–5, ф.7 (кроме крит. 7), чек-принтер; ф.6 пропущена — docs/log/2026-10.md
 
@@ -20,6 +21,7 @@ SplitCheck: хост фоткает чек → QR; гости тапают св�
 - Края split.ts (CONTRACT_split §8) — чинить?
 - Главная: лишний Tab-стоп у CaptureButton (motion) — чинить?
 - hydration mismatch <html> (шрифты layout.tsx) повторяется после рестарта dev — чинить?
+- Turbopack-кэш отдаёт старый globals.css (build без .aurora, dev без opacity); без .next/cache — ок. Dev: перезапуск без .next/dev/cache
 - Prod: редкое исключение motion (readValueFromInstance) — чинить?
 
 ## Осталось `[предположение]`
