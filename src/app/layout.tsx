@@ -33,7 +33,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
+    // suppressHydrationWarning: расширения браузера дописывают классы в <html> (mdl-js) до гидрации; действует только на сам <html>
     <html
+      suppressHydrationWarning
       lang="pl"
       className={`${instrumentSans.variable} ${geistMono.variable} ${instrumentSerif.variable} h-full antialiased`}
     >

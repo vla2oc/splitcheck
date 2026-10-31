@@ -28,7 +28,8 @@ export function BottomBar({ shareGrosze, isHost, blikPhone, onShare, onCopyBlik,
     // z-20: над бумагой чека (z-10 в ReceiptPrinter), под шторками (z-40/50)
     <div className="sticky bottom-0 z-20 border-t border-border bg-oxford/95 pb-[calc(env(safe-area-inset-bottom)+16px)] backdrop-blur">
       <div className="mx-auto flex w-full max-w-[440px] flex-col gap-3 px-4 pt-4">
-        <div className="flex items-end justify-between gap-4">
+        {/* flex-wrap: на 360–375px сумма 36px и кнопка рядом не помещаются — кнопка уходит строкой ниже, а не под сумму */}
+        <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-3">
           <div className="flex min-w-0 flex-col gap-1">
             <span className="text-sm text-text-muted">Twoja część</span>
             {/* Пружина меняет текст каждый кадр — читалке отдаём только итоговое значение */}
@@ -40,7 +41,7 @@ export function BottomBar({ shareGrosze, isHost, blikPhone, onShare, onCopyBlik,
             </span>
           </div>
           {isHost && (
-            <motion.button type="button" onClick={onShare} whileTap={{ scale: 0.96 }} transition={spring.snappy} className={pill}>
+            <motion.button type="button" onClick={onShare} whileTap={{ scale: 0.96 }} transition={spring.snappy} className={`${pill} ml-auto`}>
               Udostępnij
             </motion.button>
           )}
@@ -51,7 +52,7 @@ export function BottomBar({ shareGrosze, isHost, blikPhone, onShare, onCopyBlik,
               disabled={!canShowReceipt}
               whileTap={canShowReceipt ? { scale: 0.96 } : undefined}
               transition={spring.snappy}
-              className="h-12 shrink-0 rounded-full border border-vista px-5 font-medium text-vista hover:bg-vista-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-vista disabled:border-border disabled:text-text-muted disabled:hover:bg-transparent"
+              className="ml-auto h-12 shrink-0 rounded-full border border-vista px-5 font-medium text-vista hover:bg-vista-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-vista disabled:border-border disabled:text-text-muted disabled:hover:bg-transparent"
             >
               Pokaż mój paragon
             </motion.button>
