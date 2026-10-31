@@ -1,4 +1,5 @@
 -- SplitCheck, фаза 7: одна таблица снимков сессий. Выполнить ОДИН раз в Supabase → SQL Editor (повтор упадёт на publication).
+-- Сразу после — migrations/002_lockdown.sql: закрывает открытый доступ ниже (RPC + сигнал Broadcast); текущий код без неё не работает.
 -- Источник: docs/PHASE7_realtime.md; дока Supabase «Realtime Postgres Changes», «Row Level Security», «Securing your API» (2026-10-31).
 
 create table if not exists public.sessions (

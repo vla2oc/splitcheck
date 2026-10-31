@@ -1,4 +1,4 @@
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { createClient, type RealtimeChannel, type SupabaseClient } from "@supabase/supabase-js";
 import type { Apply, SessionTransport } from "@/lib/transport/types";
 import type { Session } from "@/lib/types";
 
@@ -143,48 +143,114 @@ export function createSupabaseTransport({ api, timeoutMs = TIMEOUT_MS }: Deps): 
   };
 }
 
-// Единственное место, где живёт supabase-js. Проверено по типам @supabase/supabase-js 2.118.0 (node_modules)
+// Секрет хоста: создаётся при save, живёт только в localStorage хоста, в базе — sha256 (supabase/migrations/002_lockdown.sql)
+export const hostSecretKey = (sessionId: string) => `splitcheck:host:${sessionId}`;
+
+function readHostSecret(sessionId: string): string | null {
+  try {
+    return localStorage.getItem(hostSecretKey(sessionId));
+  } catch {
+    return null; // приватный режим: пишем как гость — цены и BLIK не поменять
+  }
+}
+
+function newHostSecret(sessionId: string): string {
+  const secret = Array.from(crypto.getRandomValues(new Uint8Array(32)), (b) => b.toString(16).padStart(2, "0")).join("");
+  try {
+    localStorage.setItem(hostSecretKey(sessionId), secret);
+  } catch {
+    // не сохранился — сессия создастся, но править цены и BLIK хост не сможет
+  }
+  return secret;
+}
+
+type Listener = { onRow: (row: Row) => void; onSubscribed: () => void };
+type Watch = { channel: RealtimeChannel; listeners: Set<Listener>; subscribed: boolean };
+
+// Единственное место, где живёт supabase-js. Таблица закрыта: только RPC из 002_lockdown.sql.
+// Проверено по типам @supabase/supabase-js 2.118.0 (node_modules: rpc — index.d.mts, broadcast — RealtimeChannel.d.ts)
 export function supabaseSessionsApi(client: SupabaseClient): SessionsApi {
-  const table = () => client.from("sessions");
-  let channels = 0;
+  // Один канал на сессию: имя канала = topic Broadcast, а client.channel(имя) отдаёт уже существующий
+  const watches = new Map<string, Watch>();
+
+  async function select(sessionId: string): Promise<Row | null> {
+    const { data, error } = await client.rpc("get_session", { p_id: sessionId });
+    if (error) throw error;
+    return (data as Row | null) ?? null;
+  }
+
   return {
-    async select(sessionId) {
-      const { data, error } = await table().select("id, version, data").eq("id", sessionId).maybeSingle();
-      if (error) throw error;
-      return data as Row | null;
-    },
+    select,
 
     async insert(row) {
-      const { error } = await table().insert(row);
+      const { error } = await client.rpc("create_session", {
+        p_id: row.id,
+        p_data: row.data,
+        p_host_secret: newHostSecret(row.id),
+      });
       if (error) throw error;
     },
 
     async updateIfVersion(row, expectedVersion) {
-      const { data, error } = await table()
-        .update({ version: row.version, data: row.data, updated_at: new Date().toISOString() })
-        .eq("id", row.id)
-        .eq("version", expectedVersion)
-        .select("id");
+      // База сама ставит version = expected + 1 — транспорт считает так же
+      const { data, error } = await client.rpc("update_session", {
+        p_id: row.id,
+        p_expected_version: expectedVersion,
+        p_data: row.data,
+        p_host_secret: readHostSecret(row.id),
+      });
       if (error) throw error;
-      return data.length > 0;
+      return data === true;
     },
 
     watch(sessionId, onRow, onSubscribed) {
-      // client.channel(имя) отдаёт уже существующий канал с тем же именем — каждой подписке своё
-      const channel = client
-        .channel(`session:${sessionId}:${++channels}`)
-        .on(
-          "postgres_changes",
-          { event: "*", schema: "public", table: "sessions", filter: `id=eq.${sessionId}` },
-          (payload) => {
-            if (payload.eventType !== "DELETE") onRow(payload.new as Row);
-          },
-        )
-        .subscribe((status, error) => {
-          if (status === "SUBSCRIBED") onSubscribed();
-          else if (status !== "CLOSED") console.warn(`[supabase] realtime ${status}`, error);
+      const listener: Listener = { onRow, onSubscribed };
+      let watch = watches.get(sessionId);
+      if (!watch) {
+        // Сигнал без данных — строку берём через get_session: подделанный сигнал даёт лишь лишнее чтение.
+        // Пачку сигналов схлопываем: пока идёт чтение, следующий сигнал — одно повторное чтение после него
+        let reading = false;
+        let again = false;
+        const refresh = () => {
+          if (reading) {
+            again = true;
+            return;
+          }
+          reading = true;
+          select(sessionId)
+            .then(
+              (row) => row && current.listeners.forEach((l) => l.onRow(row)),
+              (error: unknown) => console.warn("[supabase] read after signal failed", error),
+            )
+            .finally(() => {
+              reading = false;
+              if (again) {
+                again = false;
+                refresh();
+              }
+            });
+        };
+        const current: Watch = { channel: client.channel(`session:${sessionId}`), listeners: new Set(), subscribed: false };
+        current.channel.on("broadcast", { event: "row" }, refresh).subscribe((status, error) => {
+          if (status === "SUBSCRIBED") {
+            current.subscribed = true;
+            current.listeners.forEach((l) => l.onSubscribed());
+          } else if (status !== "CLOSED") console.warn(`[supabase] realtime ${status}`, error);
         });
-      return () => void client.removeChannel(channel);
+        watches.set(sessionId, current);
+        watch = current;
+      } else if (watch.subscribed) {
+        onSubscribed();
+      }
+      watch.listeners.add(listener);
+
+      const own = watch;
+      return () => {
+        own.listeners.delete(listener);
+        if (own.listeners.size > 0) return;
+        watches.delete(sessionId);
+        void client.removeChannel(own.channel);
+      };
     },
   };
 }
