@@ -115,3 +115,9 @@
 2026-10-31 | defaultTransport: env есть → Supabase, нет → вкладки; process.env буквально | Next инлайнит только буквальные
 2026-10-31 | Шкала: h-3, bg-vista/20; текст text-base, суммы жирные | просьба человека
 2026-10-31 | Ф.0–7 одним коммитом + push, без соавторства Claude | просьба человека
+2026-10-31 | Синк по умолчанию — наш бэкенд /api/sessions (SessionsApi по HTTP+SSE); ключи Supabase в .env.local → Supabase как раньше | один процесс и туннель, не засыпает
+2026-10-31 | http.ts переиспользует createSupabaseTransport с другим SessionsApi | очередь, пачки и конфликт версий уже проверены тестами; меняется только сеть
+2026-10-31 | Парсер: httpReceiptParser → POST /api/parse (Claude на бэкенде); ?demo в адресе → демо-чек бэкенда без Claude | запасной вариант на сцене
+2026-10-31 | Скидка бэкенда сверх сервиса и чаевых режет позиции пропорционально (наибольший остаток), serviceGrosze ≥ 0 | в Session нет скидки; сумма до гроша
+2026-10-31 | next.config: rewrites /api → BACKEND_URL (дефолт localhost:8787), proxyTimeout 120 с, *.trycloudflare.com | прокси по умолчанию рвёт через 30 с
+2026-10-31 | package-lock.json обновлён через npm install | npm ci падал: lock не совпадал с package.json

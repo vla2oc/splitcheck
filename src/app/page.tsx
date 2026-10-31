@@ -6,12 +6,12 @@ import { motion, stagger, type Variants } from "motion/react";
 import { CaptureButton } from "@/components/CaptureButton";
 import { ScanPreview } from "@/components/ScanPreview";
 import { spring } from "@/lib/motion";
-import { mockReceiptParser } from "@/lib/receipt/mockParser";
+import { httpReceiptParser } from "@/lib/receipt/httpParser";
 import type { ReceiptParser } from "@/lib/receipt/types";
 import { useSessionStore } from "@/lib/store";
 
-// MVP: hardcoded, see NOT_NOW.md — единственная точка подмены парсера (позже /api/parse-receipt)
-const parser: ReceiptParser = mockReceiptParser;
+// Единственная точка подмены парсера: фото → POST /api/parse нашего бэкенда (Claude), ?demo → демо-чек
+const parser: ReceiptParser = httpReceiptParser;
 
 const enter: Variants = {
   hidden: { opacity: 0, y: 12 },
@@ -28,7 +28,8 @@ export default function Home() {
     try {
       const id = createSession(await parser.parse(picked));
       router.push(`/s/${id}`);
-    } catch {
+    } catch (error) {
+      console.warn("[parse] failed", error);
       setFile(null); // парсер упал — назад к кнопкам, а не вечный скан
     }
   }

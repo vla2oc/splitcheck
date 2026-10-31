@@ -1,4 +1,4 @@
-import { getBrowserTransport } from "@/lib/transport/broadcast";
+import { getHttpTransport } from "@/lib/transport/http";
 import { getSupabaseTransport } from "@/lib/transport/supabase";
 import type { SessionTransport } from "@/lib/transport/types";
 
@@ -6,9 +6,9 @@ import type { SessionTransport } from "@/lib/transport/types";
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
-// Точка подмены реализации — стор и UI не меняются. Есть .env.local → Supabase (между устройствами),
-// нет → вкладки одного браузера (localStorage + BroadcastChannel). На сервере (SSR) транспорта нет
+// Точка подмены реализации — стор и UI не меняются. Есть ключи Supabase в .env.local → Supabase,
+// нет → наш бэкенд (/api/sessions через прокси Next, см. next.config.ts). На сервере (SSR) транспорта нет
 export function defaultTransport(): SessionTransport | null {
   if (typeof window === "undefined") return null;
-  return SUPABASE_URL && SUPABASE_KEY ? getSupabaseTransport(SUPABASE_URL, SUPABASE_KEY) : getBrowserTransport();
+  return SUPABASE_URL && SUPABASE_KEY ? getSupabaseTransport(SUPABASE_URL, SUPABASE_KEY) : getHttpTransport();
 }
