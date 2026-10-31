@@ -5,6 +5,7 @@
 SplitCheck: хост фоткает чек → QR; гости тапают свои позиции и видят долг (BLIK). Фронт + наш бэкенд (Bsemenii/reciept): Claude-распознавание и синк. Спека: docs/SPEC.md
 
 ## Сделано (текущая фаза, новое сверху)
+- 2026-10-31 — Production: https://splitcheck-snowy.vercel.app (main 31dad74, Ready): главная, Claude 4,4 с, сессия в Supabase через RPC, выгрузка 401
 - 2026-10-31 — Supabase закрыт (002_lockdown.sql применён человеком): только RPC, гость — отметки и себя, BLIK/цены — секрет хоста, синк — сигнал Broadcast, чистка 30 дн.; атаки 15/15, хост↔гость ок
 - 2026-10-31 — Ветка vercel: /api/parse перенесён из бэкенда в Route Handler (тесты 139, build ок); замер чека: Opus 5,2 с, Sonnet 5.5 3,4 с, Haiku 5.5 2,4 с; fast mode — лимит 0 у орг.
 - 2026-10-31 — BottomBar: flex-wrap, сумма не наезжает на кнопку (330–412px, 100,10 zł); <html suppressHydrationWarning> — ошибки нет
@@ -13,10 +14,10 @@ SplitCheck: хост фоткает чек → QR; гости тапают св�
 - 2026-10-31 — ф.0–5, ф.7 (кроме крит. 7), чек-принтер; ф.6 пропущена — docs/log/2026-10.md
 
 ## Сейчас в работе
-Деплой на Vercel: ветка vercel, тег pre-vercel = откат. Синк — Supabase, чтение чека — src/app/api/parse (ключ в .env.local)
+Production на Vercel (main → авто-деплой). Откат: Vercel → Instant Rollback; база — supabase/migrations/002_lockdown_down.sql
 
 ## Следующий шаг
-Vercel подключён с env (человек, 2026-10-31). Preview ветки vercel → проверка с телефона → merge в main = первый production
+Человек: проверить production с 2 телефонов на реальном чеке; перед публичной ссылкой — лимит /api/parse в Vercel Firewall
 
 ## Открытые вопросы ко мне
 - Коммиты: ф.0–7 одним коммитом и push на GitHub по просьбе человека, без соавторства Claude
