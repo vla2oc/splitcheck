@@ -15,7 +15,7 @@ SplitCheck: хост фоткает чек → QR; гости тапают св�
 Деплой на Vercel: ветка vercel, тег pre-vercel = откат. Синк — Supabase, чтение чека — src/app/api/parse (ключ в .env.local)
 
 ## Следующий шаг
-Человек: импорт репо в Vercel + env (ANTHROPIC_API_KEY, NEXT_PUBLIC_SUPABASE_*) → preview с ветки vercel → телефон → merge в main
+Vercel подключён с env (человек, 2026-10-31). Preview ветки vercel → проверка с телефона → merge в main = первый production
 
 ## Открытые вопросы ко мне
 - Коммиты: ф.0–7 одним коммитом и push на GitHub по просьбе человека, без соавторства Claude
