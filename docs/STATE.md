@@ -5,6 +5,7 @@
 SplitCheck: хост фоткает чек → QR; гости тапают свои позиции и видят долг (BLIK). Фронт + наш бэкенд (Bsemenii/reciept): Claude-распознавание и синк. Спека: docs/SPEC.md
 
 ## Сделано (текущая фаза, новое сверху)
+- 2026-10-31 — Vercel Firewall: «Limit receipt parsing» — /api/parse ≤ 10 запросов/60 с на IP → 429; проверено на prod: 10×200, 11-й 429, сброс через минуту
 - 2026-10-31 — Vercel Web Analytics: <Analytics /> в layout.tsx (@vercel/analytics 2.0.1); build ок, страницы остались статичными
 - 2026-10-31 — Production: https://splitcheck-snowy.vercel.app (main 31dad74, Ready): главная, Claude 4,4 с, сессия в Supabase через RPC, выгрузка 401
 - 2026-10-31 — Supabase закрыт (002_lockdown.sql применён человеком): только RPC, гость — отметки и себя, BLIK/цены — секрет хоста, синк — сигнал Broadcast, чистка 30 дн.; атаки 15/15, хост↔гость ок
@@ -18,7 +19,7 @@ SplitCheck: хост фоткает чек → QR; гости тапают св�
 Production на Vercel (main → авто-деплой). Откат: Vercel → Instant Rollback; база — supabase/migrations/002_lockdown_down.sql
 
 ## Следующий шаг
-Человек: проверить production с 2 телефонов на реальном чеке; перед публичной ссылкой — лимит /api/parse в Vercel Firewall
+Человек: проверить production с 2 телефонов на реальном чеке
 
 ## Открытые вопросы ко мне
 - Коммиты: ф.0–7 одним коммитом и push на GitHub по просьбе человека, без соавторства Claude
